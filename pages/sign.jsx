@@ -41,7 +41,9 @@ export default function SignPage() {
       }
     };
 
-    if (name && email && phone) fetchPreview();
+    console.log('🔍 useEffect triggered');
+  console.log('Params:', { name, email, phone });
+  if (name && email && phone) fetchPreview();
     else setError("Missing required query parameters.");
   }, [name, email, phone]);
 
