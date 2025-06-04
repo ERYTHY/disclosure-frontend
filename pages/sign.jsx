@@ -44,7 +44,7 @@ export default function SignPage() {
     console.log('🔍 useEffect triggered');
   console.log('Params:', { name, email, phone });
   if (name && email && phone) fetchPreview();
-    else setError("Missing required query parameters.");
+    else setError("MRQ.");
   }, [name, email, phone]);
 
   const handleSign = async () => {
