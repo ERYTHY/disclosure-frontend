@@ -44,7 +44,7 @@ export default function SignPage() {
     console.log('🔍 useEffect triggered');
   console.log('Params:', { name, email, phone });
   if (name && email && phone) fetchPreview();
-    else setError("MRQ.");
+    else setError("If PDF deosn't show properly then view Fullscreen.");
   }, [name, email, phone]);
 
   const handleSign = async () => {
@@ -60,11 +60,11 @@ export default function SignPage() {
       if (!response.ok) throw new Error(data.message || "Signing failed");
       setSignedLink(data.downloadUrl);
 
-      await fetch("https://hooks.zapier.com/hooks/catch/YOUR_ZAPIER_HOOK_ID", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, signedUrl: data.downloadUrl })
-      });
+      await fetch("https://hook.us2.make.com/7bvx5myhbwl1mantowangr6utibpmobw", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name, email, phone, downloadUrl: data.downloadUrl })
+});
 
       await fetch("https://hooks.zapier.com/hooks/catch/YOUR_TWILIO_HOOK_ID", {
         method: "POST",
