@@ -66,11 +66,19 @@ export default function SignPage() {
   body: JSON.stringify({ name, email, phone, downloadUrl: data.downloadUrl })
 });
 
-      await fetch("https://hooks.zapier.com/hooks/catch/YOUR_TWILIO_HOOK_ID", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone, message: `Hi ${name}, your signed disclosures are ready: ${data.downloadUrl}` })
-      });
+      await fetch("https://hook.us2.make.com/b9ytdj6aejio9trl8x49yq7ky3xpukl4", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name, email, phone, signedUrl: data.downloadUrl })
+});
+
+const res1 = await fetch("https://hook.us2.make.com/7bvx5myhbwl1mantowangr6utibpmobw", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ name, email, phone, signedUrl: data.downloadUrl })
+});
+console.log("Webhook 1 response:", await res1.text());
+
     } catch (err) {
       setError(err.message || "Signing failed.");
       console.error("❌ Signing error:", err);
