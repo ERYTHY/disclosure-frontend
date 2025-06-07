@@ -2,10 +2,16 @@
   {
     "id": "team-perrone",
     "label": "Team Perrone",
-    "logoUrl": "https://example.com/team-perrone-logo.png",
-    "driveFolderId": "12345team",
-    "twilioWebhookUrl": "https://hook.us2.make.com/team-perrone-text",
-    "fubWebhookUrl": "https://hook.us2.make.com/team-perrone-fub",
+    "driveFolderId": "1p-cNIwfpwW1OhqLgNescmrNywbPRbjSO",
+    "twilioWebhookUrl": "https://hook.us2.make.com/b9ytdj6aejio9trl8x49yq7ky3xpukl4",
+    "fubWebhookUrl": "https://hook.us2.make.com/b9ytdj6aejio9trl8x49yq7ky3xpukl4",
+    "agentName": "Paul Perrone/Team Perrone",
+    "branding": {
+      "primaryColor": "#003366",
+      "secondaryColor": "#FFCC00",
+      "font": "Arial",
+      "logoUrl": "https://your-cdn.com/team-perrone-logo.png"
+    },
     "pdfs": [
       "Fair Housing Disclosure.pdf",
       "Agency Disclosure.pdf",
@@ -16,10 +22,16 @@
   {
     "id": "agent-jane",
     "label": "Agent Jane Realty",
-    "logoUrl": "https://example.com/jane-logo.png",
     "driveFolderId": "12345abcdjane",
-    "twilioWebhookUrl": "https://hook.us2.make.com/agent-jane-text",
+    "twilioWebhookUrl": "https://hook.us2.make.com/yyyyyy",
     "fubWebhookUrl": "https://hook.us2.make.com/agent-jane-fub",
+    "agentName": "Jane Smith/JS Realty",
+    "branding": {
+      "primaryColor": "#6C3483",
+      "secondaryColor": "#FAD7A0",
+      "font": "Georgia",
+      "logoUrl": "https://example.com/jane-logo.png"
+    },
     "pdfs": [
       "Fair Housing Disclosure.pdf",
       "Agency Disclosure.pdf",
