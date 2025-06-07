@@ -2,25 +2,29 @@
   {
     "id": "team-perrone",
     "label": "Team Perrone",
-    "logo": "/logo-perrone.png"
+    "logoUrl": "https://example.com/team-perrone-logo.png",
+    "driveFolderId": "12345team",
+    "twilioWebhookUrl": "https://hook.us2.make.com/team-perrone-text",
+    "fubWebhookUrl": "https://hook.us2.make.com/team-perrone-fub",
+    "pdfs": [
+      "Fair Housing Disclosure.pdf",
+      "Agency Disclosure.pdf",
+      "Standard Operating Procedure.pdf",
+      "Disclosure about PCDS.pdf"
+    ]
   },
   {
-    "id": "sunrise-realty",
-    "label": "Sunrise Realty",
-    "logo": "/logo-sunrise.png"
-  },
-  {
-  "id": "agent-jane",
-  "label": "Agent Jane Realty",
-  "logoUrl": "https://example.com/jane-logo.png",
-  "driveFolderId": "12345abcdjane",
-  "twilioWebhookUrl": "https://hook.us2.make.com/agent-jane-text",
-  "fubWebhookUrl": "https://hook.us2.make.com/agent-jane-fub",
-  "pdfs": [
-    "Fair Housing Disclosure.pdf",
-    "Agency Disclosure.pdf",
-    "Standard Operating Procedure.pdf",
-    "Disclosure about PCDS.pdf"
-  ]
-}
+    "id": "agent-jane",
+    "label": "Agent Jane Realty",
+    "logoUrl": "https://example.com/jane-logo.png",
+    "driveFolderId": "12345abcdjane",
+    "twilioWebhookUrl": "https://hook.us2.make.com/agent-jane-text",
+    "fubWebhookUrl": "https://hook.us2.make.com/agent-jane-fub",
+    "pdfs": [
+      "Fair Housing Disclosure.pdf",
+      "Agency Disclosure.pdf",
+      "Standard Operating Procedure.pdf",
+      "Disclosure about PCDS.pdf"
+    ]
+  }
 ]
