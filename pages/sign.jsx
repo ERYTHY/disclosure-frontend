@@ -1,18 +1,19 @@
-// pages/sign.jsx
-
 "use client";
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+
+// Default fallback tenant if none specified
+const DEFAULT_TENANT = "teamperrone";
 
 export default function SignPage() {
   const searchParams = useSearchParams();
   const name = searchParams.get("name") || "";
   const email = searchParams.get("email") || "";
   const phone = searchParams.get("phone") || "";
+  const tenant = searchParams.get("tenant") || DEFAULT_TENANT;
 
   const [previewUrl, setPreviewUrl] = useState(null);
   const [signedLink, setSignedLink] = useState(null);
@@ -26,7 +27,7 @@ export default function SignPage() {
         const response = await fetch("https://disclosure-backend.onrender.com/api/preview-disclosure", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, phone, })
+          body: JSON.stringify({ name, email, phone, tenant })
         });
 
         const data = await response.json();
@@ -41,11 +42,12 @@ export default function SignPage() {
       }
     };
 
-    console.log('🔍 useEffect triggered');
-  console.log('Params:', { name, email, phone });
-  if (name && email && phone) fetchPreview();
-    else setError("If PDF deosn't show properly then view Fullscreen.");
-  }, [name, email, phone]);
+    if (name && email && phone) {
+      fetchPreview();
+    } else {
+      setError("Missing required contact parameters.");
+    }
+  }, [name, email, phone, tenant]);
 
   const handleSign = async () => {
     try {
@@ -53,31 +55,19 @@ export default function SignPage() {
       const response = await fetch("https://disclosure-backend.onrender.com/api/generate-disclosure", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, })
+        body: JSON.stringify({ name, email, phone, tenant })
       });
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Signing failed");
       setSignedLink(data.downloadUrl);
 
+      // Notify tenant's Make webhook (optional)
       await fetch("https://hook.us2.make.com/7bvx5myhbwl1mantowangr6utibpmobw", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ name, email, phone, downloadUrl: data.downloadUrl })
-});
-
-      await fetch("https://hook.us2.make.com/b9ytdj6aejio9trl8x49yq7ky3xpukl4", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ name, email, phone, signedUrl: data.downloadUrl })
-});
-
-const res1 = await fetch("https://hook.us2.make.com/7bvx5myhbwl1mantowangr6utibpmobw", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ name, email, phone, signedUrl: data.downloadUrl })
-});
-console.log("Webhook 1 response:", await res1.text());
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, downloadUrl: data.downloadUrl })
+      });
 
     } catch (err) {
       setError(err.message || "Signing failed.");
@@ -107,6 +97,7 @@ console.log("Webhook 1 response:", await res1.text());
             <Input value={name} readOnly />
             <Input value={email} readOnly />
             <Input value={phone} readOnly />
+            <Input value={tenant} readOnly />
 
             <Button onClick={handleSign} disabled={loading}>
               {loading ? "Generating..." : "Tap to Sign and Confirm"}
@@ -118,9 +109,12 @@ console.log("Webhook 1 response:", await res1.text());
       {signedLink && (
         <div className="space-y-4">
           <p className="text-green-700 font-semibold">
-            ✅ Signed disclosures ready: <a className="underline" href={signedLink} target="_blank">{signedLink}</a>
+            ✅ Signed disclosures ready:{" "}
+            <a className="underline" href={signedLink} target="_blank" rel="noreferrer">
+              {signedLink}
+            </a>
           </p>
-          <p>Thank you! - Team Perrone</p>
+          <p>Thank you! – Team Perrone</p>
         </div>
       )}
     </main>
