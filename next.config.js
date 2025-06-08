@@ -5,3 +5,9 @@ const nextConfig = {
 };
 
 module.exports = nextConfig;
+module.exports = {
+  reactStrictMode: true,
+  images: {
+    unoptimized: true, // or properly configure remote domains if needed
+  },
+};

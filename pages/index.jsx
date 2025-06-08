@@ -21,3 +21,8 @@ export default function Home() {
     </main>
   );
 }
+<img
+  src={`/logos/${tenant.logo}`}
+  alt={`${tenant.label} logo`}
+  className="h-10 object-contain mb-2"
+/>

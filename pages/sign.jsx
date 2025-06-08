@@ -2,18 +2,17 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+import tenants from "../tenants.json";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-
-// Default fallback tenant if none specified
-const DEFAULT_TENANT = "teamperrone";
 
 export default function SignPage() {
   const searchParams = useSearchParams();
   const name = searchParams.get("name") || "";
   const email = searchParams.get("email") || "";
   const phone = searchParams.get("phone") || "";
-  const tenant = searchParams.get("tenant") || DEFAULT_TENANT;
+  const tenantId = searchParams.get("tenant") || "team-perrone";
+  const tenant = tenants.find((t) => t.id === tenantId);
 
   const [previewUrl, setPreviewUrl] = useState(null);
   const [signedLink, setSignedLink] = useState(null);
@@ -27,7 +26,7 @@ export default function SignPage() {
         const response = await fetch("https://disclosure-backend.onrender.com/api/preview-disclosure", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name, email, phone, tenant })
+          body: JSON.stringify({ name, email, phone, tenant: tenantId })
         });
 
         const data = await response.json();
@@ -42,12 +41,9 @@ export default function SignPage() {
       }
     };
 
-    if (name && email && phone) {
-      fetchPreview();
-    } else {
-      setError("Missing required contact parameters.");
-    }
-  }, [name, email, phone, tenant]);
+    if (name && email && phone && tenantId) fetchPreview();
+    else setError("Missing information. Please return to the form.");
+  }, [name, email, phone, tenantId]);
 
   const handleSign = async () => {
     try {
@@ -55,18 +51,24 @@ export default function SignPage() {
       const response = await fetch("https://disclosure-backend.onrender.com/api/generate-disclosure", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, tenant })
+        body: JSON.stringify({ name, email, phone, tenant: tenantId })
       });
 
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || "Signing failed");
       setSignedLink(data.downloadUrl);
 
-      // Notify tenant's Make webhook (optional)
-      await fetch("https://hook.us2.make.com/7bvx5myhbwl1mantowangr6utibpmobw", {
+      // Send signed URL to Make webhook (Twilio + FUB logic)
+      await fetch(tenant.fubWebhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, phone, downloadUrl: data.downloadUrl })
+        body: JSON.stringify({ name, email, phone, signedUrl: data.downloadUrl })
+      });
+
+      await fetch(tenant.twilioWebhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone, signedUrl: data.downloadUrl })
       });
 
     } catch (err) {
@@ -77,44 +79,59 @@ export default function SignPage() {
     }
   };
 
+  const brandColor = tenant?.branding?.primaryColor || "#003366";
+
   return (
-    <main className="max-w-3xl mx-auto mt-10 p-4 border rounded-xl shadow">
-      <h1 className="text-2xl font-bold mb-4">Disclosure Review & Signing</h1>
+    <main className="max-w-3xl mx-auto mt-10 p-4 border rounded-xl shadow bg-white">
+      {tenant?.branding?.logoUrl && (
+        <div className="flex justify-center mb-6">
+          <img src={tenant.branding.logoUrl} alt={tenant.label} className="h-12" />
+        </div>
+      )}
+
+      <h1 className="text-2xl font-bold mb-4" style={{ color: brandColor }}>
+        Review and Sign Your Disclosures
+      </h1>
 
       {loading && <p className="text-gray-600">Loading...</p>}
       {error && <p className="text-red-600">{error}</p>}
 
       {!signedLink && previewUrl && (
         <>
-          <iframe
-            src={previewUrl}
-            title="Disclosure Preview"
-            width="100%"
-            height="600px"
-            style={{ border: "1px solid #ccc", marginBottom: "20px" }}
-          />
+          <div className="border-4 border-blue-400 rounded-md p-2 mb-4 shadow-md bg-white">
+            <iframe
+              src={previewUrl}
+              title="Disclosure Preview"
+              width="100%"
+              height="600px"
+              className="rounded border border-gray-300"
+            />
+            <p className="text-xs text-gray-600 text-center mt-2">
+              📄 Scroll <strong>outside this box</strong> to see the “Sign and Confirm” button below.
+            </p>
+          </div>
+
           <div className="space-y-4">
             <Input value={name} readOnly />
             <Input value={email} readOnly />
             <Input value={phone} readOnly />
-            <Input value={tenant} readOnly />
 
             <Button onClick={handleSign} disabled={loading}>
-              {loading ? "Generating..." : "Tap to Sign and Confirm"}
+              {loading ? "Generating..." : "✅ Tap to Sign and Confirm"}
             </Button>
           </div>
         </>
       )}
 
       {signedLink && (
-        <div className="space-y-4">
+        <div className="space-y-4 mt-4">
           <p className="text-green-700 font-semibold">
-            ✅ Signed disclosures ready:{" "}
-            <a className="underline" href={signedLink} target="_blank" rel="noreferrer">
-              {signedLink}
+            ✅ Your disclosures have been signed! <br />
+            <a className="underline" href={signedLink} target="_blank">
+              View Signed PDF
             </a>
           </p>
-          <p>Thank you! – Team Perrone</p>
+          <p>Thank you! — {tenant?.agentName || "Your Agent"}</p>
         </div>
       )}
     </main>
