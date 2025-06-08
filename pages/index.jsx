@@ -13,6 +13,10 @@ export default function Home() {
               href={`/sign?tenant=${tenant.id}&name=John%20Doe&email=john@example.com&phone=6311234567`}
               className="text-blue-600 underline"
             >
+              <Link href="/start" className="text-blue-600 underline">
+  Start Disclosure for {tenant.label}
+</Link>
+
               Preview Disclosure for {tenant.label}
             </Link>
           </li>
