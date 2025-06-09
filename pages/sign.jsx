@@ -71,6 +71,21 @@ export default function SignPage() {
         body: JSON.stringify({ name, email, phone, signedUrl: data.downloadUrl })
       });
 
+      await fetch('/api/signed-disclosure', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    name,
+    email,
+    phone,
+    agentPhone,
+    pdfUrl,
+    tenantId,
+    contactId // pulled earlier from the FUB webhook
+  }),
+});
+
+
     } catch (err) {
       setError(err.message || "Signing failed.");
       console.error("❌ Signing error:", err);
