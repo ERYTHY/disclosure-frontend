@@ -8,6 +8,21 @@ const PreviewPage = () => {
   const [pdfLinks, setPdfLinks] = useState([]);
 
   useEffect(() => {
+    const fetchPreviews = async () => {
+      const params = new URLSearchParams(window.location.search);
+      const tenant = params.get('tenant');
+      const res = await fetch(`https://disclosure-backend.onrender.com/api/get-preview-links?tenant=${tenant}`);
+      const data = await res.json();
+      setPreviewLinks(data.previewLinks);
+      setLoading(false);
+    };
+    fetchPreviews();
+  }, []);
+
+  // ...};
+  
+
+  useEffect(() => {
     if (!name || !email || !phone || !tenant) return;
 
     const fetchPDFs = async () => {
