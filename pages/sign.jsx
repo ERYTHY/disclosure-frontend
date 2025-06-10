@@ -2,7 +2,6 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import tenants from "../tenants.json";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 const res = await fetch(`https://disclosure-backend.onrender.com/api/get-tenant-config?tenant=${tenantId}`);
