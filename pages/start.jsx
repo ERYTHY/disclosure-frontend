@@ -2,7 +2,8 @@
 
 "use client";
 import { useState } from "react";
-import tenants from "../tenants.json";
+const res = await fetch(`https://disclosure-backend.onrender.com/api/get-tenant-config?tenant=${tenantId}`);
+const tenant = await res.json();
 import { useRouter } from "next/router";
 
 export default function StartForm() {

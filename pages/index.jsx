@@ -1,4 +1,5 @@
-import tenants from '../tenants.json';
+const res = await fetch(`https://disclosure-backend.onrender.com/api/get-tenant-config?tenant=${tenantId}`);
+const tenant = await res.json();
 import Link from 'next/link';
 import Image from 'next/image';
 
