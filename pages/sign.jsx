@@ -5,16 +5,9 @@ import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useRouter } from 'next/router';
+import tenants from '../tenants.json';
 
-export default function SignPage() {
-  const router = useRouter();
-  const { tenant = 'team_perrone' } = router.query;
 
-  // Now use `tenant` wherever you previously used `tenantId`
-}
-
-const res = await fetch(`https://disclosure-backend.onrender.com/api/get-tenant-config?tenant=${tenantId}`);
-const tenant = await res.json();
 
 export default function SignPage() {
   const searchParams = useSearchParams();
