@@ -40,3 +40,13 @@ export default function Home() {
     </main>
   );
 }
+export async function getServerSideProps(context) {
+  const { tenant } = context.query;
+  const tenantId = tenant || 'team_perrone'; // fallback if undefined
+
+  return {
+    props: {
+      tenantId,
+    },
+  };
+}
