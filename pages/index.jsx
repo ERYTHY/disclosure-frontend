@@ -1,9 +1,7 @@
-const res = await fetch(`https://disclosure-backend.onrender.com/api/get-tenant-config?tenant=${tenantId}`);
-const tenant = await res.json();
 import Link from 'next/link';
 import Image from 'next/image';
 
-export default function Home() {
+export default function Home({ tenants }) {
   return (
     <main className="max-w-xl mx-auto mt-10 p-4">
       <h1 className="text-2xl font-bold mb-6">Choose Tenant</h1>
@@ -40,13 +38,16 @@ export default function Home() {
     </main>
   );
 }
-export async function getServerSideProps(context) {
-  const { tenant } = context.query;
-  const tenantID = tenant || 'team_perrone'; // fallback if undefined
 
-  return {
-    props: {
-      tenant,
-    },
-  };
+// ✅ This loads tenants from the backend on page load
+export async function getServerSideProps() {
+  try {
+    const res = await fetch(`https://disclosure-backend.onrender.com/api/get-all-tenants`);
+    const tenants = await res.json();
+
+    return { props: { tenants } };
+  } catch (error) {
+    console.error('❌ Failed to fetch tenants:', error);
+    return { props: { tenants: [] } };
+  }
 }
