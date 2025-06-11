@@ -8,31 +8,20 @@ const PreviewPage = () => {
   const [pdfLinks, setPdfLinks] = useState([]);
 
   useEffect(() => {
-    const fetchPreviews = async () => {
-      const params = new URLSearchParams(window.location.search);
-      const tenant = params.get('tenant');
-      const res = await fetch(`https://disclosure-backend.onrender.com/api/get-preview-links?tenant=${tenant}`);
-      const data = await res.json();
-      setPreviewLinks(data.previewLinks);
-      setLoading(false);
-    };
-    fetchPreviews();
-  }, []);
-
-  // ...};
-  
-
-  useEffect(() => {
-    if (!name || !email || !phone || !tenant) return;
+    if (!name || !email || !phone || !tenant) {
+      setLoading(false); // Stop loading if essential params are missing
+      return;
+    }
 
     const fetchPDFs = async () => {
       try {
         const response = await fetch(`/api/get-preview-links?name=${encodeURIComponent(name)}&email=${encodeURIComponent(email)}&phone=${encodeURIComponent(phone)}&tenant=${tenant}`);
         const data = await response.json();
-        setPdfLinks(data.pdfUrls); // assumes backend returns { pdfUrls: [link1, link2, ...] }
-        setLoading(false);
+        setPdfLinks(data.pdfUrls); 
       } catch (err) {
         console.error('Failed to load PDF previews:', err);
+        // setLoading(false) is already in finally
+      } finally {
         setLoading(false);
       }
     };
