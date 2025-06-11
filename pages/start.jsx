@@ -1,17 +1,45 @@
 // pages/start.jsx
 
 "use client";
-import { useState } from "react";
-const res = await fetch(`https://disclosure-backend.onrender.com/api/get-tenant-config?tenant=${tenantId}`);
-const tenant = await res.json();
+import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 
 export default function StartForm() {
-  const [tenant, setTenant] = useState(tenants[0].id);
+  const [tenantOptions, setTenantOptions] = useState([]);
+  const [tenant, setTenant] = useState(""); // Selected tenant ID
+  const [loadingTenants, setLoadingTenants] = useState(true);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchTenantList = async () => {
+      setLoadingTenants(true);
+      try {
+        const response = await fetch('/api/admin/tenants');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch tenants: ${response.status}`);
+        }
+        const data = await response.json();
+        // Assuming data is { default: "...", tenants: [{ key: "...", config: { name: "..." }, ... }] }
+        const mappedTenants = (data.tenants || []).map(t => ({
+          id: t.key, // Assuming key is the ID
+          label: t.config?.name || t.key, // Use key as fallback label
+        }));
+        setTenantOptions(mappedTenants);
+        if (mappedTenants.length > 0) {
+          setTenant(mappedTenants[0].id); // Set default selected tenant
+        }
+      } catch (error) {
+        console.error("Error fetching tenant list:", error);
+        // Optionally set an error state here to display to the user
+      } finally {
+        setLoadingTenants(false);
+      }
+    };
+    fetchTenantList();
+  }, []);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -34,12 +62,19 @@ export default function StartForm() {
             className="w-full border p-2 rounded"
             value={tenant}
             onChange={(e) => setTenant(e.target.value)}
+            disabled={loadingTenants || tenantOptions.length === 0}
           >
-            {tenants.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.label}
-              </option>
-            ))}
+            {loadingTenants ? (
+              <option>Loading tenants...</option>
+            ) : tenantOptions.length === 0 ? (
+              <option>No tenants available</option>
+            ) : (
+              tenantOptions.map((opt) => (
+                <option key={opt.id} value={opt.id}>
+                  {opt.label}
+                </option>
+              ))
+            )}
           </select>
         </div>
         <div>
