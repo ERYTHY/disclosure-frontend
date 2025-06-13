@@ -10,3 +10,6 @@ export default function RootLayout({ children }) {
     </html>
   );
 }
+<body style={{ fontFamily: 'Geist, sans-serif' }}>
+  {/* content */}
+</body>
