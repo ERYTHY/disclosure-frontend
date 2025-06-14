@@ -1,6 +1,6 @@
 'use client';
 
-import FieldMapper from '../components/FieldMapper'; // or '@/components/FieldMapper' if using path alias
+import FieldMapper from '@/components/FieldMapper'; // or '@/components/FieldMapper' if using path alias
 
 
 export default function Page() {
