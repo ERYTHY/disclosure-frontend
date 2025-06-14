@@ -4,6 +4,7 @@
 import dynamic from 'next/dynamic';
 import { Suspense } from 'react';
 
+
 // Dynamically load FieldMapper so it’s excluded from SSR
 const FieldMapper = dynamic(() => import('@/components/FieldMapper'), { ssr: false });
 

@@ -1,37 +1,46 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import Draggable from 'react-draggable';
 import axios from 'axios';
-import 'react-pdf/dist/esm/Page/TextLayer.css';
 import 'react-pdf/dist/esm/Page/AnnotationLayer.css';
+import 'react-pdf/dist/esm/Page/TextLayer.css';
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
-interface Field {
+type Field = {
   id: string;
+  type: 'signature' | 'text';
   x: number;
   y: number;
-  label: string;
-}
+};
 
 export default function FieldMapper({ pdfUrl, docId }: { pdfUrl: string; docId: string }) {
-  const [numPages, setNumPages] = useState<number>(0);
   const [fields, setFields] = useState<Field[]>([]);
-  const [selectedPage, setSelectedPage] = useState(1);
+  const [numPages, setNumPages] = useState<number | null>(null);
 
   useEffect(() => {
-    // Fetch saved mappings
     axios.get(`/api/mappings/${docId}`).then(res => {
-      setFields(res.data.fields || []);
+      setFields(res.data || []);
     });
   }, [docId]);
 
-  const addField = () => {
+  const handleDragStop = (e: any, data: any, id: string) => {
+    setFields(prev =>
+      prev.map(f => (f.id === id ? { ...f, x: data.x, y: data.y } : f))
+    );
+  };
+
+  const addField = (type: 'signature' | 'text') => {
     setFields(prev => [
       ...prev,
-      { id: crypto.randomUUID(), x: 50, y: 50, label: 'Signature' }
+      {
+        id: `${type}-${Date.now()}`,
+        type,
+        x: 50,
+        y: 50,
+      },
     ]);
   };
 
@@ -39,69 +48,42 @@ export default function FieldMapper({ pdfUrl, docId }: { pdfUrl: string; docId: 
     setFields(prev => prev.filter(f => f.id !== id));
   };
 
-  const saveMapping = async () => {
-    await axios.post(`/api/mappings/${docId}`, { fields });
-    alert('Field mapping saved!');
+  const saveMappings = () => {
+    axios.post(`/api/mappings/${docId}`, fields).then(() => {
+      alert('Saved successfully!');
+    });
   };
-  const saveFields = async () => {
-  try {
-    await axios.post(`/api/fields/${docId}`, fields);
-    alert('Fields saved successfully');
-  } catch (err) {
-    console.error('Error saving fields', err);
-    alert('Error saving fields');
-  }
-};
-
-return (
-  <>
-    {/* Your field mapping code */}
-    <button onClick={saveFields} className="mt-4 px-4 py-2 bg-green-500 text-white rounded">
-      Save Field Positions
-    </button>
-  </>
-);
-
 
   return (
     <div>
-      <Document file={pdfUrl} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
-        <Page pageNumber={selectedPage} width={600} />
+      <div className="flex gap-4 mb-4">
+        <button onClick={() => addField('signature')} className="bg-blue-500 text-white px-2 py-1 rounded">Add Signature</button>
+        <button onClick={() => addField('text')} className="bg-green-500 text-white px-2 py-1 rounded">Add Text Field</button>
+        <button onClick={saveMappings} className="bg-purple-500 text-white px-2 py-1 rounded">Save</button>
+      </div>
+
+      <div className="relative border shadow inline-block">
+        <Document file={pdfUrl} onLoadSuccess={({ numPages }) => setNumPages(numPages)}>
+          <Page pageNumber={1} />
+        </Document>
+
         {fields.map(field => (
           <Draggable
             key={field.id}
-            defaultPosition={{ x: field.x, y: field.y }}
-            onStop={(_, data) => {
-              setFields(prev =>
-                prev.map(f =>
-                  f.id === field.id ? { ...f, x: data.x, y: data.y } : f
-                )
-              );
-            }}
+            position={{ x: field.x, y: field.y }}
+            onStop={(e, data) => handleDragStop(e, data, field.id)}
           >
             <div
-              style={{
-                position: 'absolute',
-                background: 'rgba(255, 255, 0, 0.7)',
-                padding: '4px',
-                cursor: 'move',
-                border: '1px solid #333',
-              }}
+              className={`absolute px-2 py-1 rounded text-xs cursor-move ${
+                field.type === 'signature' ? 'bg-red-500' : 'bg-yellow-500'
+              }`}
+              style={{ zIndex: 10 }}
               onDoubleClick={() => removeField(field.id)}
             >
-              ✍ {field.label}
+              {field.type.toUpperCase()}
             </div>
           </Draggable>
         ))}
-      </Document>
-      <div className="flex space-x-4 mt-4">
-        <button onClick={addField}>➕ Add Field</button>
-        <button onClick={saveMapping}>💾 Save Mapping</button>
-      </div>
-      <div className="mt-2">
-        Page: {selectedPage} / {numPages}
-        <button disabled={selectedPage === 1} onClick={() => setSelectedPage(p => p - 1)}>⬅️</button>
-        <button disabled={selectedPage === numPages} onClick={() => setSelectedPage(p => p + 1)}>➡️</button>
       </div>
     </div>
   );
