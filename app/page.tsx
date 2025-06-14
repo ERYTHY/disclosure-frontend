@@ -1,4 +1,3 @@
-// app/page.tsx
 'use client';
 
 import HomePage from '../components/HomePage';
