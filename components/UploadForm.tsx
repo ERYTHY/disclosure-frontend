@@ -22,12 +22,13 @@ export default function UploadForm() {
     }
 
     const formData = new FormData();
-    pdfFiles.forEach((file) => formData.append('documents', file));
-    formData.append('name', 'Test User'); // Replace with actual data
-    formData.append('phone', '+15555555555');
-    formData.append('email', 'test@example.com');
-    formData.append('agentName', 'Agent Smith');
-    formData.append('agentPhone', '+15555555556');
+pdfFiles.forEach((file) => formData.append('pdfs', file)); // ✅ "pdfs" must match multer config
+formData.append('name', 'Test User');
+formData.append('phone', '+15555555555');
+formData.append('email', 'test@example.com');
+formData.append('agentName', 'Agent Smith');
+formData.append('agentPhone', '+15555555556');
+
 
     try {
       const res = await axios.post(
