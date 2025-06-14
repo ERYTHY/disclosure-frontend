@@ -1,18 +1,22 @@
 // app/map/page.tsx
-'use client'; // if you're using client-side features
+'use client'; // ✅ Ensures this file is fully client-rendered
 
-export const dynamic = 'force-dynamic'; // ✅ disables static generation
+import dynamic from 'next/dynamic';
+import { Suspense } from 'react';
 
-import FieldMapper from '@/components/FieldMapper';
+// Dynamically load FieldMapper so it’s excluded from SSR
+const FieldMapper = dynamic(() => import('@/components/FieldMapper'), { ssr: false });
 
 export default function MapPage() {
-  const pdfUrl = '/uploads/sample.pdf'; // You might load this dynamically later
-  const docId = 'sample123';
+  const pdfUrl = '/uploads/sample.pdf'; // Replace with real backend URL later
+  const docId = 'sample123'; // Replace with unique doc ID later
 
   return (
     <main className="p-4">
       <h1 className="text-xl font-bold mb-4">Map Signature Fields</h1>
-      <FieldMapper pdfUrl={pdfUrl} docId={docId} />
+      <Suspense fallback={<div>Loading PDF Mapper...</div>}>
+        <FieldMapper pdfUrl={pdfUrl} docId={docId} />
+      </Suspense>
     </main>
   );
 }
