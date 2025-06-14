@@ -1,10 +1,12 @@
-'use client';
+// app/map/page.tsx
+'use client'; // if you're using client-side features
 
-import FieldMapper from '@/components/FieldMapper'; // or '@/components/FieldMapper' if using path alias
+export const dynamic = 'force-dynamic'; // ✅ disables static generation
 
+import FieldMapper from '@/components/FieldMapper';
 
-export default function Page() {
-  const pdfUrl = '/uploads/sample.pdf';
+export default function MapPage() {
+  const pdfUrl = '/uploads/sample.pdf'; // You might load this dynamically later
   const docId = 'sample123';
 
   return (
