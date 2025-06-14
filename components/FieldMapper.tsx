@@ -43,6 +43,25 @@ export default function FieldMapper({ pdfUrl, docId }: { pdfUrl: string; docId: 
     await axios.post(`/api/mappings/${docId}`, { fields });
     alert('Field mapping saved!');
   };
+  const saveFields = async () => {
+  try {
+    await axios.post(`/api/fields/${docId}`, fields);
+    alert('Fields saved successfully');
+  } catch (err) {
+    console.error('Error saving fields', err);
+    alert('Error saving fields');
+  }
+};
+
+return (
+  <>
+    {/* Your field mapping code */}
+    <button onClick={saveFields} className="mt-4 px-4 py-2 bg-green-500 text-white rounded">
+      Save Field Positions
+    </button>
+  </>
+);
+
 
   return (
     <div>
