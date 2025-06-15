@@ -1,76 +1,52 @@
-"use client";
+'use client';
 
-import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
-import { Document, Page, pdfjs } from "react-pdf";
-import axios from "axios";
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
-// Configure PDF.js worker
-pdfjs.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
-
-export default function ReviewPage() {
-  const { sessionId } = useParams();
-  const [pdfUrls, setPdfUrls] = useState([]);
-  const [signed, setSigned] = useState(false);
-  const [error, setError] = useState("");
+export default function SessionReviewPage() {
+  const router = useRouter();
+  const { sessionId } = router.query;
+  const [session, setSession] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (!sessionId) return;
     const fetchSession = async () => {
       try {
-        const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/disclosure/session/${sessionId}`);
-        if (res.data && res.data.pdfs) {
-          setPdfUrls(res.data.pdfs);
-        } else {
-          setError("No PDFs found in session.");
-        }
+        const res = await fetch(`https://disclosure-backend.onrender.com/api/disclosure/session/${sessionId}`);
+        if (!res.ok) throw new Error('Session not found.');
+        const data = await res.json();
+        setSession(data);
       } catch (err) {
-        console.error("Failed to load session:", err);
-        setError("Unable to load documents.");
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
-
-    if (sessionId) {
-      fetchSession();
-    }
+    fetchSession();
   }, [sessionId]);
 
-  const handleSign = async () => {
-    try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/disclosure/sign/${sessionId}`, {
-        name: "Client Name", // replace or dynamically capture
-        phone: "1234567890"
-      });
-      setSigned(true);
-    } catch (err) {
-      console.error("Signing failed:", err);
-      setError("Failed to sign documents.");
-    }
-  };
+  if (loading) return <div className="p-4">Loading session...</div>;
+  if (error) return <div className="p-4 text-red-500">Error: {error}</div>;
+  if (!session || !session.pdfs || session.pdfs.length === 0) {
+    return <div className="p-4">No PDFs found for this session.</div>;
+  }
 
   return (
-    <div className="p-6 max-w-3xl mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Review Your Documents</h1>
-
-      {error && <p className="text-red-600 mb-4">{error}</p>}
-
-      {pdfUrls.map((url, idx) => (
-        <div key={idx} className="mb-6 border rounded shadow">
-          <Document file={url} onLoadError={e => setError("Failed to load PDF file.")}>
-            <Page pageNumber={1} />
-          </Document>
-        </div>
+    <div className="p-4 space-y-8">
+      <h1 className="text-2xl font-bold">Review Disclosures</h1>
+      <p className="text-gray-700">Please review the documents below:</p>
+      {session.pdfs.map((pdfUrl, i) => (
+        <iframe
+          key={i}
+          src={pdfUrl.startsWith('http') ? pdfUrl : `https://disclosure-backend.onrender.com${pdfUrl}`}
+          width="100%"
+          height="800px"
+          className="border shadow"
+          title={`PDF ${i + 1}`}
+        />
       ))}
-
-      {!signed ? (
-        <button
-          onClick={handleSign}
-          className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
-        >
-          Sign and Confirm
-        </button>
-      ) : (
-        <p className="text-green-700 mt-4">Documents signed and sent.</p>
-      )}
     </div>
   );
 }
