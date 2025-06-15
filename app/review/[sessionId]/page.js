@@ -1,17 +1,17 @@
+// app/review/[sessionId]/page.js
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 
-export default function SessionReviewPage() {
-  const router = useRouter();
-  const { sessionId } = router.query;
+export default function SessionReviewPage({ params }) {
+  const { sessionId } = params;
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!sessionId) return;
+
     const fetchSession = async () => {
       try {
         const res = await fetch(`https://disclosure-backend.onrender.com/api/disclosure/session/${sessionId}`);
@@ -24,6 +24,7 @@ export default function SessionReviewPage() {
         setLoading(false);
       }
     };
+
     fetchSession();
   }, [sessionId]);
 
