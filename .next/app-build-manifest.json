@@ -1,3 +1,51 @@
 {
-  "pages": {}
+  "pages": {
+    "/_not-found/page": [
+      "static/chunks/webpack-018fe243d5325af3.js",
+      "static/chunks/fd9d1056-70515ac497ed38cb.js",
+      "static/chunks/117-27d8113bf256714e.js",
+      "static/chunks/main-app-08bf9d528c7e09f8.js",
+      "static/chunks/app/_not-found/page-f1a4b047210d9e98.js"
+    ],
+    "/layout": [
+      "static/chunks/webpack-018fe243d5325af3.js",
+      "static/chunks/fd9d1056-70515ac497ed38cb.js",
+      "static/chunks/117-27d8113bf256714e.js",
+      "static/chunks/main-app-08bf9d528c7e09f8.js",
+      "static/chunks/app/layout-cbd3ebdc4ecc5247.js"
+    ],
+    "/map/page": [
+      "static/chunks/webpack-018fe243d5325af3.js",
+      "static/chunks/fd9d1056-70515ac497ed38cb.js",
+      "static/chunks/117-27d8113bf256714e.js",
+      "static/chunks/main-app-08bf9d528c7e09f8.js",
+      "static/chunks/app/map/page-c920691320057ff9.js"
+    ],
+    "/upload/page": [
+      "static/chunks/webpack-018fe243d5325af3.js",
+      "static/chunks/fd9d1056-70515ac497ed38cb.js",
+      "static/chunks/117-27d8113bf256714e.js",
+      "static/chunks/main-app-08bf9d528c7e09f8.js",
+      "static/chunks/464-60ca446de3c9e7c5.js",
+      "static/chunks/app/upload/page-07b3564d7dffe6b3.js"
+    ],
+    "/review/[sessionId]/page": [
+      "static/chunks/webpack-018fe243d5325af3.js",
+      "static/chunks/fd9d1056-70515ac497ed38cb.js",
+      "static/chunks/117-27d8113bf256714e.js",
+      "static/chunks/main-app-08bf9d528c7e09f8.js",
+      "static/chunks/685f7497-5d14fc6d3d30ae53.js",
+      "static/chunks/464-60ca446de3c9e7c5.js",
+      "static/chunks/143-b76d5ddcced7d1bc.js",
+      "static/chunks/app/review/[sessionId]/page-f4ebffa3c1a16e8d.js"
+    ],
+    "/page": [
+      "static/chunks/webpack-018fe243d5325af3.js",
+      "static/chunks/fd9d1056-70515ac497ed38cb.js",
+      "static/chunks/117-27d8113bf256714e.js",
+      "static/chunks/main-app-08bf9d528c7e09f8.js",
+      "static/chunks/464-60ca446de3c9e7c5.js",
+      "static/chunks/app/page-9144479f3c49ca50.js"
+    ]
+  }
 }

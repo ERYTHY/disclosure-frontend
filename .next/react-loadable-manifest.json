@@ -1,1 +1,13 @@
-{}
+{
+  "app\\map\\page.tsx -> @/components/FieldMapper": {
+    "id": 236,
+    "files": [
+      "static/css/a3beb0905218b947.css",
+      "static/chunks/685f7497-5d14fc6d3d30ae53.js",
+      "static/chunks/464-60ca446de3c9e7c5.js",
+      "static/chunks/143-b76d5ddcced7d1bc.js",
+      "static/chunks/444.7a5538d13bdd2b1a.js",
+      "static/chunks/236.8bcf4840eed31242.js"
+    ]
+  }
+}
