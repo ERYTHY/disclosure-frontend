@@ -1,11 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
 
-export default function SessionReviewPage() {
-  const router = useRouter();
-  const { sessionId } = router.query;
+export default function SessionReviewPage({ params }) {
+  const sessionId = params.sessionId;
   const [session, setSession] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -14,7 +12,6 @@ export default function SessionReviewPage() {
   const [downloadUrl, setDownloadUrl] = useState('');
 
   useEffect(() => {
-    if (!sessionId) return;
     const fetchSession = async () => {
       try {
         const res = await fetch(`https://disclosure-backend.onrender.com/api/disclosure/session/${sessionId}`);
