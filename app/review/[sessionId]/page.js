@@ -64,15 +64,11 @@ export default function SessionReviewPage({ params }) {
       <h1 className="text-2xl font-bold">Review Disclosures</h1>
       <p className="text-gray-700">Please review the documents below:</p>
 
-      {session.pdfs.map((pdfUrl, i) => (
-  <div key={i} className="w-full h-[80vh] mb-8">
-    <iframe
-      src={pdfUrl.startsWith('http') ? pdfUrl : `https://disclosure-backend.onrender.com${pdfUrl}`}
-      width="100%"
-      height="100%"
-      className="border shadow"
-      title={`PDF ${i + 1}`}
-    />
+      import PDFViewer from '@/components/PDFViewer';
+
+{session.pdfs.map((pdfUrl, i) => (
+  <div key={i} className="w-full h-auto mb-8">
+    <PDFViewer url={pdfUrl.startsWith('http') ? pdfUrl : `https://disclosure-backend.onrender.com${pdfUrl}`} />
   </div>
 ))}
 
