@@ -9,7 +9,7 @@ export default function SessionReviewPage({ params }) {
   const [loading, setLoading] = useState(true);
   const [signing, setSigning] = useState(false);
   const [signed, setSigned] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState('');
+  const [setDownloadUrl] = useState('');
 
   useEffect(() => {
     const fetchSession = async () => {
@@ -42,7 +42,7 @@ export default function SessionReviewPage({ params }) {
       const data = await res.json();
       if (res.ok) {
         setSigned(true);
-        setDownloadUrl(data.downloadUrl);
+        setSession({ ...session, pdfs: data.signedPdfs });
       } else {
         throw new Error(data.error || 'Signing failed.');
       }
@@ -65,15 +65,17 @@ export default function SessionReviewPage({ params }) {
       <p className="text-gray-700">Please review the documents below:</p>
 
       {session.pdfs.map((pdfUrl, i) => (
-        <iframe
-          key={i}
-          src={pdfUrl.startsWith('http') ? pdfUrl : `https://disclosure-backend.onrender.com${pdfUrl}`}
-          width="100%"
-          height="800px"
-          className="border shadow"
-          title={`PDF ${i + 1}`}
-        />
-      ))}
+  <div key={i} className="w-full h-[80vh] mb-8">
+    <iframe
+      src={pdfUrl.startsWith('http') ? pdfUrl : `https://disclosure-backend.onrender.com${pdfUrl}`}
+      width="100%"
+      height="100%"
+      className="border shadow"
+      title={`PDF ${i + 1}`}
+    />
+  </div>
+))}
+
 
       {!signed && (
         <button
@@ -85,19 +87,26 @@ export default function SessionReviewPage({ params }) {
         </button>
       )}
 
-      {signed && (
-        <div className="mt-6 text-green-600 font-medium">
-          Document signed!{' '}
+      {signed && session.pdfs && (
+  <div className="mt-6">
+    <p className="text-green-600 font-medium">Documents signed successfully!</p>
+    <ul className="list-disc pl-6 mt-2">
+      {session.pdfs.map((url, idx) => (
+        <li key={idx}>
           <a
-            href={downloadUrl}
+            href={url.startsWith('http') ? url : `https://disclosure-backend.onrender.com${url}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="underline text-blue-600"
+            className="text-blue-600 underline"
           >
-            Download your signed disclosure
+            Download Signed PDF {idx + 1}
           </a>
-        </div>
-      )}
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
     </div>
   );
 }
