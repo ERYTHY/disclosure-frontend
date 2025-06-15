@@ -23,6 +23,50 @@ export default function SessionReviewPage({ params }) {
       } finally {
         setLoading(false);
       }
+      {!session.signed && (
+  <button
+    onClick={async () => {
+      try {
+        const res = await fetch(`https://disclosure-backend.onrender.com/api/disclosure/sign/${sessionId}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: session.name, phone: session.phone })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          alert('Documents signed! You can now download your copy.');
+          setSession(prev => ({ ...prev, signed: true, pdfs: data.signedPdfs }));
+        } else {
+          alert(`Sign failed: ${data.error}`);
+        }
+      } catch (err) {
+        alert('An error occurred during signing.');
+        console.error(err);
+      }
+    }}
+    className="bg-blue-600 text-white px-6 py-2 rounded shadow hover:bg-blue-700"
+  >
+    Sign and Confirm
+  </button>
+)}
+{session.signed && (
+  <div className="space-y-2">
+    <h2 className="text-lg font-semibold">Download Signed Documents:</h2>
+    {session.pdfs.map((pdfUrl, i) => (
+      <a
+        key={i}
+        href={pdfUrl.startsWith('http') ? pdfUrl : `https://disclosure-backend.onrender.com${pdfUrl}`}
+        className="text-blue-600 underline block"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Signed Document {i + 1}
+      </a>
+    ))}
+  </div>
+)}
+
+
     };
 
     fetchSession();
